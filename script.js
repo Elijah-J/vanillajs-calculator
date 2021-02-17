@@ -12,7 +12,12 @@ function initButtonClickListeners() {
 
 function printToDisplay(symbol) {
   let display = document.getElementById("display");
-  display.innerText += ` ${symbol}`;
+  if (/^\d+$/.test(symbol)) {
+    display.innerText += `${symbol}`;
+  } else {
+    display.innerText += `\xa0${symbol}\xa0`;
+  }
+  console.log(display.innerText);
 }
 
 function clearDisplay() {
