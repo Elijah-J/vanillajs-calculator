@@ -9,7 +9,7 @@ function initButtonClickListeners() {
 
 function printToDisplay(symbol) {
   let display = document.getElementById("display");
-  display.innerText = symbol;
+  display.innerText += ` ${symbol}`;
 }
 
 initButtonClickListeners();
