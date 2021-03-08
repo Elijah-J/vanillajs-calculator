@@ -88,8 +88,8 @@ function evaluatePostfixExpression(postfixExpression) {
     if (token.match(/\d/)) {
       operandStack.push(token);
     } else {
-      let operandTwo = operandStack.pop();
-      let operandOne = operandStack.pop();
+      let operandTwo = parseInt(operandStack.pop());
+      let operandOne = parseInt(operandStack.pop());
       let result = doMath(operandOne, operandTwo, postfixExpression[i]);
       operandStack.push(result);
     }
