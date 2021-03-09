@@ -7,27 +7,68 @@
     <title>Calculator</title>
   </head>
   <body>
-    <div id="display"></div>
+    <div class="flex-container">
+      <div class="grid-container">
+        <div id="display" class="calculator__display"></div>
 
-    <button type="button" class="calculator-token">1</button>
-    <button type="button" class="calculator-token">2</button>
-    <button type="button" class="calculator-token">3</button>
-    <button type="button" class="calculator-token">4</button>
-    <button type="button" class="calculator-token">5</button>
-    <button type="button" class="calculator-token">6</button>
-    <button type="button" class="calculator-token">7</button>
-    <button type="button" class="calculator-token">8</button>
-    <button type="button" class="calculator-token">9</button>
-    <button type="button" class="calculator-token">0</button>
+        <button type="button" class="calculator-token calculator__one">
+          1
+        </button>
+        <button type="button" class="calculator-token calculator__two">
+          2
+        </button>
+        <button type="button" class="calculator-token calculator__three">
+          3
+        </button>
+        <button type="button" class="calculator-token calculator__four">
+          4
+        </button>
+        <button type="button" class="calculator-token calculator__five">
+          5
+        </button>
+        <button type="button" class="calculator-token calculator__six">
+          6
+        </button>
+        <button type="button" class="calculator-token calculator__seven">
+          7
+        </button>
+        <button type="button" class="calculator-token calculator__eight">
+          8
+        </button>
+        <button type="button" class="calculator-token calculator__nine">
+          9
+        </button>
+        <button type="button" class="calculator-token calculator__zero">
+          0
+        </button>
 
-    <button type="button" class="calculator-token">+</button>
-    <button type="button" class="calculator-token">-</button>
-    <button type="button" class="calculator-token">*</button>
-    <button type="button" class="calculator-token">/</button>
+        <button type="button" class="calculator-token calculator__division">
+          /
+        </button>
+        <button
+          type="button"
+          class="calculator-token calculator__multiplication"
+        >
+          *
+        </button>
+        <button type="button" class="calculator-token calculator__subtraction">
+          -
+        </button>
+        <button type="button" class="calculator-token calculator__addition">
+          +
+        </button>
 
-    <button type="button" id="solve-expression">=</button>
+        <button
+          type="button"
+          id="solve-expression"
+          class="calculator__equality"
+        >
+          =
+        </button>
 
-    <button type="button" id="clear-expression">CE</button>
+        <button type="button" id="clear-expression">AC</button>
+      </div>
+    </div>
 
     <script src="./script.js"></script>
   </body>
