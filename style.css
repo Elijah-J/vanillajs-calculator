@@ -1,3 +1,23 @@
+body {
+  background: #eee;
+}
+
+button {
+  border: none;
+}
+
+button:hover {
+  background: #ddd;
+}
+
+button:active {
+  background: #bbb;
+}
+
+button:focus {
+  outline: none;
+}
+
 .flex-container {
   display: flex;
 
@@ -7,13 +27,11 @@
   min-height: 100vh;
 }
 
-/* calculator and its buttons */
-
 .grid-container {
   display: grid;
 
   grid-template-columns: 50px 50px 50px 50px;
-  grid-template-rows: 50px 50px 50px 50px 50px 50px;
+  grid-template-rows: 65px 50px 50px 50px 50px 50px;
 
   grid-template-areas:
     "display display display display"
@@ -21,13 +39,26 @@
     "number-nine number-eight number-seven multiplication-operator"
     "number-six number-five number-four subtraction-operator"
     "number-three number-two number-one addition-operator"
-    "number-zero . . equality-operator";
+    "number-zero number-zero . equality-operator";
+
+  column-gap: 1px;
+  row-gap: 1px;
+
+  border: 1px solid #777;
+
+  background: #ccc;
 }
 
 .calculator__display {
   grid-area: display;
 
-  border: 1px solid black;
+  padding: 1.8em;
+  padding-right: 1em;
+
+  font-family: sans-serif;
+  text-align: right;
+
+  background: #fff;
 }
 
 .calculator__division {
