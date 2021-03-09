@@ -45,7 +45,7 @@ function removeLastCharacter() {
       display.innerText.length - charactersToRemove
     );
     charactersToRemove = 1;
-  } while (display.innerText[display.innerText.length - 1] === " ");
+  } while (/\s/.test(display.innerText[display.innerText.length - 1]));
 }
 
 function printResult(result) {
