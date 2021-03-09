@@ -9,6 +9,9 @@ function initButtonClickListeners() {
   let clearButton = document.getElementById("clear-expression");
   clearButton.onclick = clearDisplay;
 
+  let backspaceButton = document.getElementById("calculator-backspace");
+  backspaceButton.onclick = removeLastCharacter;
+
   let solveButton = document.getElementById("solve-expression");
   solveButton.onclick = function () {
     solveExpression(document.getElementById("display").innerText);
@@ -27,6 +30,22 @@ function printToDisplay(symbol) {
 function clearDisplay() {
   let display = document.getElementById("display");
   display.innerText = "";
+}
+
+function removeLastCharacter() {
+  let display = document.getElementById("display");
+  let charactersToRemove = 1;
+
+  if (/\s/.test(display.innerText[display.innerText.length - 1]))
+    charactersToRemove = 2;
+
+  do {
+    display.innerText = display.innerText.slice(
+      0,
+      display.innerText.length - charactersToRemove
+    );
+    charactersToRemove = 1;
+  } while (display.innerText[display.innerText.length - 1] === " ");
 }
 
 function printResult(result) {
