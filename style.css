@@ -1,0 +1,91 @@
+.flex-container {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  min-height: 100vh;
+}
+
+/* calculator and its buttons */
+
+.grid-container {
+  display: grid;
+
+  grid-template-columns: 50px 50px 50px 50px;
+  grid-template-rows: 50px 50px 50px 50px 50px 50px;
+
+  grid-template-areas:
+    "display display display display"
+    "main-button-area main-button-area main-button-area division-operator"
+    "number-nine number-eight number-seven multiplication-operator"
+    "number-six number-five number-four subtraction-operator"
+    "number-three number-two number-one addition-operator"
+    "number-zero . . equality-operator";
+}
+
+.calculator__display {
+  grid-area: display;
+
+  border: 1px solid black;
+}
+
+.calculator__division {
+  grid-area: division-operator;
+}
+
+.calculator__multiplication {
+  grid-area: multiplication-operator;
+}
+
+.calculator__subtraction {
+  grid-area: subtraction-operator;
+}
+
+.calculator__addition {
+  grid-area: addition-operator;
+}
+
+.calculator__equality {
+  grid-area: equality-operator;
+}
+
+.calculator__nine {
+  grid-area: number-nine;
+}
+
+.calculator__eight {
+  grid-area: number-eight;
+}
+
+.calculator__seven {
+  grid-area: number-seven;
+}
+
+.calculator__six {
+  grid-area: number-six;
+}
+
+.calculator__five {
+  grid-area: number-five;
+}
+
+.calculator__four {
+  grid-area: number-four;
+}
+
+.calculator__three {
+  grid-area: number-three;
+}
+
+.calculator__two {
+  grid-area: number-two;
+}
+
+.calculator__one {
+  grid-area: number-one;
+}
+
+.calculator__zero {
+  grid-area: number-zero;
+}
