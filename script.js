@@ -36,7 +36,8 @@ function printResult(result) {
 
 function solveExpression(expression) {
   let tokenizedExpression = tokenize(expression);
-  let postfixExpression = convertFromInfixToPostfix(tokenizedExpression);
+  let normalizedExpression = normalizeSymbols(tokenizedExpression);
+  let postfixExpression = convertFromInfixToPostfix(normalizedExpression);
   let evaluatedExpression = evaluatePostfixExpression(postfixExpression);
 
   printResult(evaluatedExpression);
@@ -44,6 +45,17 @@ function solveExpression(expression) {
 
 function tokenize(expression) {
   return expression.split(/\s/);
+}
+
+function normalizeSymbols(tokenizedExpression) {
+  for (let i = 0; i < tokenizedExpression.length; i++) {
+    if (tokenizedExpression[i] === "\u00F7") {
+      tokenizedExpression[i] = "/";
+    } else if (tokenizedExpression[i] === "x") {
+      tokenizedExpression[i] = "*";
+    }
+  }
+  return tokenizedExpression;
 }
 
 function convertFromInfixToPostfix(tokenizedExpression) {
