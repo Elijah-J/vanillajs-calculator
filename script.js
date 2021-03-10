@@ -22,6 +22,11 @@ function printToDisplay(symbol) {
   let display = document.getElementById("display");
   if (/^\d+$/.test(symbol)) {
     display.innerText += `${symbol}`;
+  } else if (/^\.$/.test(symbol)) {
+    console.log(".");
+    if (!/^\d+$/.test(display.innerText[display.innerText.length - 1]))
+      return null;
+    display.innerText += `${symbol}`;
   } else {
     display.innerText += `\xa0${symbol}\xa0 `;
   }
@@ -119,8 +124,8 @@ function evaluatePostfixExpression(postfixExpression) {
     if (token.match(/\d/)) {
       operandStack.push(token);
     } else {
-      let operandTwo = parseInt(operandStack.pop());
-      let operandOne = parseInt(operandStack.pop());
+      let operandTwo = parseFloat(operandStack.pop());
+      let operandOne = parseFloat(operandStack.pop());
       let result = doMath(operandOne, operandTwo, postfixExpression[i]);
       operandStack.push(result);
     }
