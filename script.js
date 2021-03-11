@@ -1,3 +1,6 @@
+const MAX_DISPLAY_CAPCITY = 16;
+let solutionDisplaying = false;
+
 function initButtonClickListeners() {
   let tokenButtons = document.getElementsByClassName("calculator-token");
   [...tokenButtons].forEach((tokenButton) => {
@@ -22,10 +25,16 @@ function initButtonClickListeners() {
 }
 
 function printToDisplay(symbol) {
-  if (!checkSyntaxOnInput(symbol)) return null;
+  clearSolution();
 
   let display = document.getElementById("display");
-  if (/^\d+$/.test(symbol)) {
+  if (
+    display.innerText.length >= MAX_DISPLAY_CAPCITY ||
+    !checkSyntaxOnInput(symbol)
+  )
+    return;
+
+  if (/\d/.test(symbol)) {
     display.innerText += `${symbol}`;
   } else if (/^\.$/.test(symbol)) {
     if (!/^\d+$/.test(display.innerText[display.innerText.length - 1]))
@@ -61,6 +70,8 @@ function clearDisplay() {
 }
 
 function removeLastCharacter() {
+  clearSolution();
+
   let display = document.getElementById("display");
   let charactersToRemove = 1;
 
@@ -73,16 +84,18 @@ function removeLastCharacter() {
       display.innerText.length - charactersToRemove
     );
     charactersToRemove = 1;
-  } while (/(\s|-)/.test(display.innerText[display.innerText.length - 1]));
+  } while (/(\s|-|\.)/.test(display.innerText[display.innerText.length - 1]));
 }
 
 function printResult(result) {
   let display = document.getElementById("display");
   display.innerText = result;
+  solutionDisplaying = true;
 }
 
 function switchSign() {
-  console.log("switchsign called!");
+  if (solutionDisplaying === true) clearDisplay();
+
   let displayText = document.getElementById("display").innerText;
   let tokenizedDisplay = tokenize(displayText);
   let currentSymbol = tokenizedDisplay[tokenizedDisplay.length - 1];
@@ -195,6 +208,11 @@ function doMath(operandOne, operandTwo, operator) {
 
 function isNumber(symbol) {
   return /^-?\d+\.*\d*$/.test(symbol);
+}
+
+function clearSolution() {
+  if (solutionDisplaying === true) clearDisplay();
+  solutionDisplaying = false;
 }
 
 initButtonClickListeners();
