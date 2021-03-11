@@ -12,6 +12,9 @@ function initButtonClickListeners() {
   let backspaceButton = document.getElementById("calculator-backspace");
   backspaceButton.onclick = removeLastCharacter;
 
+  let oppositeButton = document.getElementById("calculator-opposite");
+  oppositeButton.onclick = switchSign;
+
   let solveButton = document.getElementById("solve-expression");
   solveButton.onclick = function () {
     solveExpression(document.getElementById("display").innerText);
@@ -19,17 +22,37 @@ function initButtonClickListeners() {
 }
 
 function printToDisplay(symbol) {
+  if (!checkSyntaxOnInput(symbol)) return null;
+
   let display = document.getElementById("display");
   if (/^\d+$/.test(symbol)) {
     display.innerText += `${symbol}`;
   } else if (/^\.$/.test(symbol)) {
-    console.log(".");
     if (!/^\d+$/.test(display.innerText[display.innerText.length - 1]))
       return null;
     display.innerText += `${symbol}`;
   } else {
     display.innerText += `\xa0${symbol}\xa0 `;
   }
+}
+
+function checkSyntaxOnInput(symbol) {
+  const displayText = document.getElementById("display").innerText;
+  let tokenizedDisplayText = tokenize(displayText);
+  let normalizedDisplayText = normalizeSymbols(tokenizedDisplayText);
+
+  if ("+-x\u00F7".indexOf(symbol) !== -1) {
+    if (!isNumber(normalizedDisplayText[normalizedDisplayText.length - 1])) {
+      return false;
+    }
+  } else if (/^\.$/.test(symbol)) {
+    if (
+      normalizedDisplayText[normalizedDisplayText.length - 1].indexOf(".") != -1
+    ) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function clearDisplay() {
@@ -50,7 +73,7 @@ function removeLastCharacter() {
       display.innerText.length - charactersToRemove
     );
     charactersToRemove = 1;
-  } while (/\s/.test(display.innerText[display.innerText.length - 1]));
+  } while (/(\s|-)/.test(display.innerText[display.innerText.length - 1]));
 }
 
 function printResult(result) {
@@ -58,13 +81,42 @@ function printResult(result) {
   display.innerText = result;
 }
 
+function switchSign() {
+  console.log("switchsign called!");
+  let displayText = document.getElementById("display").innerText;
+  let tokenizedDisplay = tokenize(displayText);
+  let currentSymbol = tokenizedDisplay[tokenizedDisplay.length - 1];
+  if (isNumber(currentSymbol)) {
+    if (currentSymbol.charAt(0) === "-") {
+      currentSymbol = currentSymbol.slice(1, currentSymbol.length);
+    } else {
+      currentSymbol = "-" + currentSymbol;
+    }
+    tokenizedDisplay[tokenizedDisplay.length - 1] = currentSymbol;
+    document.getElementById("display").innerText = tokenizedDisplay.join(" ");
+  }
+}
+
 function solveExpression(expression) {
   let tokenizedExpression = tokenize(expression);
   let normalizedExpression = normalizeSymbols(tokenizedExpression);
+  if (!checkSyntaxOnSolve(normalizedExpression)) {
+    return false;
+  }
   let postfixExpression = convertFromInfixToPostfix(normalizedExpression);
   let evaluatedExpression = evaluatePostfixExpression(postfixExpression);
 
   printResult(evaluatedExpression);
+}
+
+function checkSyntaxOnSolve(normalizedExpression) {
+  if (
+    "+-*/".indexOf(normalizedExpression[normalizedExpression.length - 1]) !== -1
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 function tokenize(expression) {
@@ -139,6 +191,10 @@ function doMath(operandOne, operandTwo, operator) {
   else if (operator === "-") return operandOne - operandTwo;
   else if (operator === "*") return operandOne * operandTwo;
   else if (operator === "/") return operandOne / operandTwo;
+}
+
+function isNumber(symbol) {
+  return /^-?\d+\.*\d*$/.test(symbol);
 }
 
 initButtonClickListeners();
