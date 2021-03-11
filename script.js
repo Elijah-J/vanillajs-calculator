@@ -1,4 +1,4 @@
-const MAX_DISPLAY_CAPCITY = 16;
+const MAX_DISPLAY_CAPCITY = 20;
 let solutionDisplaying = false;
 
 function initButtonClickListeners() {
@@ -85,6 +85,12 @@ function removeLastCharacter() {
     );
     charactersToRemove = 1;
   } while (/(\s|-|\.)/.test(display.innerText[display.innerText.length - 1]));
+  if (
+    "+-x\u00F7".indexOf(display.innerText[display.innerText.length - 1]) !== -1
+  ) {
+    console.log("call");
+    document.getElementById("display").innerText += "\xa0";
+  }
 }
 
 function printResult(result) {
