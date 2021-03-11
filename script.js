@@ -25,7 +25,11 @@ function initButtonClickListeners() {
 }
 
 function printToDisplay(symbol) {
-  clearSolution();
+  if ("+-x\u00F7".indexOf(symbol) === -1) {
+    clearSolution();
+  }
+
+  if (solutionDisplaying) solutionDisplaying = false;
 
   let display = document.getElementById("display");
   if (
