@@ -126,7 +126,7 @@ function printSolution(solution) {
 }
 
 function switchSign() {
-  if (solutionDisplaying === true) clearDisplay();
+  if (solutionDisplaying) solutionDisplaying = false;
 
   let displayText = document.getElementById("display").innerText;
   let tokenizedDisplay = tokenize(displayText);
