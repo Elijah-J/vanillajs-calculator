@@ -5,10 +5,43 @@ const MAX_DECIMAL_PRECISION = 16;
 
 let solutionDisplaying = false;
 
+function clickButton(e) {
+  let clickedButton = extractKeyName(e);
+  if (clickedButton === null) return;
+
+  clickedButton.classList.toggle("calculator-button-active");
+  clickedButton.click();
+}
+
+function deactivateButton(e) {
+  let clickedButton = extractKeyName(e);
+  if (clickedButton === null) return;
+
+  clickedButton.classList.remove("calculator-button-active");
+}
+
+function extractKeyName(e) {
+  let keyName = e.key.toString().toLowerCase();
+  if (keyName === "enter" || keyName == "space") {
+    e.preventDefault();
+  }
+  let clickedButton = null;
+  if (keyName === "enter") {
+    clickedButton = document.getElementById("=");
+  } else if (keyName === "escape") {
+    clickedButton = document.getElementById("clear-expression");
+  } else if (keyName === "o") {
+    clickedButton = document.getElementById("calculator-opposite");
+  } else {
+    clickedButton = document.getElementById(keyName);
+  }
+  return clickedButton;
+}
+
 function initButtonClickListeners() {
   let tokenButtons = document.getElementsByClassName("calculator-token");
   [...tokenButtons].forEach((tokenButton) => {
-    tokenButton.onclick = function () {
+    tokenButton.onclick = function (e) {
       printToDisplay(tokenButton.innerText);
     };
   });
@@ -16,16 +49,19 @@ function initButtonClickListeners() {
   let clearButton = document.getElementById("clear-expression");
   clearButton.onclick = clearDisplay;
 
-  let backspaceButton = document.getElementById("calculator-backspace");
+  let backspaceButton = document.getElementById("backspace");
   backspaceButton.onclick = removeLastCharacter;
 
   let oppositeButton = document.getElementById("calculator-opposite");
   oppositeButton.onclick = switchSign;
 
-  let solveButton = document.getElementById("solve-expression");
+  let solveButton = document.getElementById("=");
   solveButton.onclick = function () {
     solveExpression(document.getElementById("display").innerText);
   };
+
+  document.addEventListener("keydown", clickButton);
+  document.addEventListener("keyup", deactivateButton);
 }
 
 function printToDisplay(symbol) {
@@ -78,7 +114,7 @@ function clearDisplay() {
 }
 
 function removeLastCharacter() {
-  clearSolution();
+  if (solutionDisplaying) solutionDisplaying = false;
 
   let display = document.getElementById("display");
   let charactersToRemove = 1;
