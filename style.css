@@ -36,9 +36,9 @@ button:focus {
   grid-template-areas:
     "display display display display"
     "main-button-area main-button-area main-button-area division-operator"
-    "number-nine number-eight number-seven multiplication-operator"
-    "number-six number-five number-four subtraction-operator"
-    "number-three number-two number-one addition-operator"
+    "number-seven number-eight number-nine multiplication-operator"
+    "number-four number-five number-six subtraction-operator"
+    "number-one number-two number-three addition-operator"
     "number-zero number-zero . equality-operator";
 
   column-gap: 1px;
