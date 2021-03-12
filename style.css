@@ -10,7 +10,8 @@ button:hover {
   background: #ddd;
 }
 
-button:active {
+button:active,
+.calculator-button-active {
   background: #bbb;
 }
 
