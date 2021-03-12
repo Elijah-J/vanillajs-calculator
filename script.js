@@ -1,4 +1,8 @@
-const MAX_DISPLAY_CAPCITY = 20;
+const MAX_DISPLAY_CAPCITY = 17;
+const MAX_DIGITS_WITH_DECIMAL = MAX_DISPLAY_CAPCITY - 1; // to account for negative sign
+const MAX_POSSIBLE_INTEGER = Math.pow(10, MAX_DIGITS_WITH_DECIMAL) - 1;
+const MAX_DECIMAL_PRECISION = 16;
+
 let solutionDisplaying = false;
 
 function initButtonClickListeners() {
@@ -92,14 +96,32 @@ function removeLastCharacter() {
   if (
     "+-x\u00F7".indexOf(display.innerText[display.innerText.length - 1]) !== -1
   ) {
-    console.log("call");
     document.getElementById("display").innerText += "\xa0";
   }
 }
 
-function printResult(result) {
+function printSolution(solution) {
   let display = document.getElementById("display");
-  display.innerText = result;
+  let stringSolution = solution.toString();
+
+  if (stringSolution.includes(".")) {
+    let symbolsBeforeMantissa = solution.toString().split(".")[0].length + 1;
+    let mantissaLength = solution.toString().split(".")[1].length;
+
+    if (stringSolution.length > MAX_DIGITS_WITH_DECIMAL) {
+      solution = solution.toFixed(
+        MAX_DIGITS_WITH_DECIMAL - symbolsBeforeMantissa
+      );
+    } else if (mantissaLength < MAX_DECIMAL_PRECISION) {
+      solution = solution.toFixed(mantissaLength);
+    } else {
+      solution = solution.toFixed(MAX_DECIMAL_PRECISION);
+    }
+  } else if (solution > MAX_POSSIBLE_INTEGER) {
+    solution = Math.round((solution / 10) * 10);
+  }
+
+  display.innerText = solution;
   solutionDisplaying = true;
 }
 
@@ -129,7 +151,7 @@ function solveExpression(expression) {
   let postfixExpression = convertFromInfixToPostfix(normalizedExpression);
   let evaluatedExpression = evaluatePostfixExpression(postfixExpression);
 
-  printResult(evaluatedExpression);
+  printSolution(evaluatedExpression);
 }
 
 function checkSyntaxOnSolve(normalizedExpression) {
