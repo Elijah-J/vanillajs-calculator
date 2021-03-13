@@ -40,8 +40,10 @@ function extractKeyName(e) {
 
 function initButtonClickListeners() {
   let tokenButtons = document.getElementsByClassName("calculator-token");
+  if (tokenButtons.length === 0) return;
+
   [...tokenButtons].forEach((tokenButton) => {
-    tokenButton.onclick = function (e) {
+    tokenButton.onclick = function () {
       printToDisplay(tokenButton.innerText);
     };
   });
@@ -95,7 +97,9 @@ function checkSyntaxOnInput(symbol) {
   let normalizedDisplayText = normalizeSymbols(tokenizedDisplayText);
 
   if ("+-x\u00F7".indexOf(symbol) !== -1) {
-    if (!isNumber(normalizedDisplayText[normalizedDisplayText.length - 1])) {
+    if (
+      !isCalcNumber(normalizedDisplayText[normalizedDisplayText.length - 1])
+    ) {
       return false;
     }
   } else if (/^\.$/.test(symbol)) {
@@ -167,7 +171,7 @@ function switchSign() {
   let displayText = document.getElementById("display").innerText;
   let tokenizedDisplay = tokenize(displayText);
   let currentSymbol = tokenizedDisplay[tokenizedDisplay.length - 1];
-  if (isNumber(currentSymbol)) {
+  if (isCalcNumber(currentSymbol)) {
     if (currentSymbol.charAt(0) === "-") {
       currentSymbol = currentSymbol.slice(1, currentSymbol.length);
     } else {
@@ -190,6 +194,7 @@ function solveExpression(expression) {
   printSolution(evaluatedExpression);
 }
 
+// tested
 function checkSyntaxOnSolve(normalizedExpression) {
   if (
     "+-*/".indexOf(normalizedExpression[normalizedExpression.length - 1]) !== -1
@@ -200,10 +205,12 @@ function checkSyntaxOnSolve(normalizedExpression) {
   return true;
 }
 
+// tested
 function tokenize(expression) {
   return expression.split(/\s/);
 }
 
+// tested
 function normalizeSymbols(tokenizedExpression) {
   for (let i = 0; i < tokenizedExpression.length; i++) {
     if (tokenizedExpression[i] === "\u00F7") {
@@ -215,6 +222,7 @@ function normalizeSymbols(tokenizedExpression) {
   return tokenizedExpression;
 }
 
+// tested
 function convertFromInfixToPostfix(tokenizedExpression) {
   const precedence = {
     "*": 2,
@@ -249,6 +257,7 @@ function convertFromInfixToPostfix(tokenizedExpression) {
   return postfixList;
 }
 
+// tested
 function evaluatePostfixExpression(postfixExpression) {
   let operandStack = [];
   for (let i = 0; i < postfixExpression.length; i++) {
@@ -267,6 +276,7 @@ function evaluatePostfixExpression(postfixExpression) {
   return operandStack.pop();
 }
 
+// tested
 function doMath(operandOne, operandTwo, operator) {
   if (operator === "+") return operandOne + operandTwo;
   else if (operator === "-") return operandOne - operandTwo;
@@ -274,7 +284,8 @@ function doMath(operandOne, operandTwo, operator) {
   else if (operator === "/") return operandOne / operandTwo;
 }
 
-function isNumber(symbol) {
+// tested
+function isCalcNumber(symbol) {
   return /^-?\d+\.*\d*$/.test(symbol);
 }
 
@@ -284,3 +295,11 @@ function clearSolution() {
 }
 
 initButtonClickListeners();
+
+module.exports.isCalcNumber = isCalcNumber;
+module.exports.doMath = doMath;
+module.exports.convertFromInfixToPostfix = convertFromInfixToPostfix;
+module.exports.evaluatePostfixExpression = evaluatePostfixExpression;
+module.exports.tokenize = tokenize;
+module.exports.normalizeSymbols = normalizeSymbols;
+module.exports.checkSyntaxOnSolve = checkSyntaxOnSolve;
