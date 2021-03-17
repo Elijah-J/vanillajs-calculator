@@ -20,6 +20,7 @@ const MAX_DECIMAL_PRECISION = 16;
 
 let solutionDisplaying = false;
 
+// tested
 const initButtonClickListeners = () => {
   let tokenButtons = document.getElementsByClassName("calculator-token");
 
@@ -40,33 +41,38 @@ const initButtonClickListeners = () => {
 
   let solveButton = document.getElementById("=");
   solveButton.onclick = function () {
-    solveExpression(document.getElementById("display").innerText);
+    calculateAndPrintSolution(document.getElementById("display").innerText);
   };
 
   document.addEventListener("keydown", clickButton);
   document.addEventListener("keyup", deactivateButton);
 
-  document
-    .getElementsByClassName("calculator")[0]
-    .appendChild(document.createElement("button"));
+  document.getElementById("display").innerText = "";
 };
 
-const clickButton = (e) => {
-  let clickedButton = getButtonFromKeyEventCode(e);
+// tested
+const clickButton = (e, container = window.document) => {
+  let clickedButton = getButtonFromKeyEventCode(e, container);
   if (clickedButton === null) return;
 
   clickedButton.classList.toggle("calculator-button-active");
   clickedButton.click();
+
+  return clickedButton;
 };
 
-const deactivateButton = (e) => {
-  let clickedButton = getButtonFromKeyEventCode(e);
+// tested
+const deactivateButton = (e, container = window.document) => {
+  let clickedButton = getButtonFromKeyEventCode(e, container);
   if (clickedButton === null) return;
 
   clickedButton.classList.remove("calculator-button-active");
+
+  return clickedButton;
 };
 
-const getButtonFromKeyEventCode = (e, container = document) => {
+// tested
+const getButtonFromKeyEventCode = (e, container = window.document) => {
   let keyName = e.key.toString().toLowerCase();
   if (keyName === "enter" || keyName == "space") {
     e.preventDefault();
@@ -86,34 +92,34 @@ const getButtonFromKeyEventCode = (e, container = document) => {
   return clickedButton;
 };
 
-const printToDisplay = (symbol) => {
+// tested
+const printToDisplay = (symbol, container = window.document) => {
   if ("+-x\u00F7".indexOf(symbol) === -1) {
-    clearSolution();
+    solutionDisplaying = clearSolution(container);
   }
 
-  if (solutionDisplaying) solutionDisplaying = false;
+  solutionDisplaying = false;
 
-  let display = document.getElementById("display");
+  let display = container.getElementById("display");
   if (
     display.innerText.length >= MAX_DISPLAY_CAPCITY ||
-    !checkSyntaxOnInput(symbol)
+    !checkSyntaxOnInput(symbol, container)
   )
     return;
 
   if (/\d/.test(symbol)) {
     display.innerText += `${symbol}`;
   } else if (/^\.$/.test(symbol)) {
-    if (!/^\d+$/.test(display.innerText[display.innerText.length - 1]))
-      return null;
     display.innerText += `${symbol}`;
   } else {
-    display.innerText += `\xa0${symbol}\xa0 `;
+    display.innerText += `\xa0${symbol}\xa0`;
   }
 };
 
-const checkSyntaxOnInput = (symbol) => {
-  const displayText = document.getElementById("display").innerText;
-  let tokenizedDisplayText = tokenize(displayText);
+// tested
+const checkSyntaxOnInput = (symbol, container = window.document) => {
+  const display = container.getElementById("display");
+  let tokenizedDisplayText = tokenize(display.innerText);
   let normalizedDisplayText = normalizeSymbols(tokenizedDisplayText);
 
   if ("+-x\u00F7".indexOf(symbol) !== -1) {
@@ -124,7 +130,9 @@ const checkSyntaxOnInput = (symbol) => {
     }
   } else if (/^\.$/.test(symbol)) {
     if (
-      normalizedDisplayText[normalizedDisplayText.length - 1].indexOf(".") != -1
+      normalizedDisplayText[normalizedDisplayText.length - 1].indexOf(".") !=
+        -1 ||
+      !/^\d+$/.test(display.innerText[display.innerText.length - 1])
     ) {
       return false;
     }
@@ -132,15 +140,16 @@ const checkSyntaxOnInput = (symbol) => {
   return true;
 };
 
-const clearDisplay = () => {
-  let display = document.getElementById("display");
-  display.innerText = "";
+// tested
+const clearDisplay = (e, container = window.document) => {
+  container.getElementById("display").innerText = "";
 };
 
-const removeLastCharacter = () => {
-  if (solutionDisplaying) solutionDisplaying = false;
+// tested
+const removeLastCharacter = (e, container = window.document) => {
+  solutionDisplaying = false;
 
-  let display = document.getElementById("display");
+  let display = container.getElementById("display");
   let charactersToRemove = 1;
 
   if (/\s/.test(display.innerText[display.innerText.length - 1]))
@@ -160,8 +169,9 @@ const removeLastCharacter = () => {
   }
 };
 
-const printSolution = (solution) => {
-  let display = document.getElementById("display");
+// tested
+const printSolution = (solution, container = window.document) => {
+  let display = container.getElementById("display");
   let stringSolution = solution.toString();
 
   if (stringSolution.includes(".")) {
@@ -169,27 +179,30 @@ const printSolution = (solution) => {
     let mantissaLength = solution.toString().split(".")[1].length;
 
     if (stringSolution.length > MAX_DIGITS_WITH_DECIMAL) {
-      solution = solution.toFixed(
-        MAX_DIGITS_WITH_DECIMAL - symbolsBeforeMantissa
+      solution = parseFloat(
+        solution.toFixed(MAX_DIGITS_WITH_DECIMAL - symbolsBeforeMantissa)
       );
     } else if (mantissaLength < MAX_DECIMAL_PRECISION) {
-      solution = solution.toFixed(mantissaLength);
+      solution = parseFloat(solution.toFixed(mantissaLength));
     } else {
-      solution = solution.toFixed(MAX_DECIMAL_PRECISION);
+      solution = parseFloat(solution.toFixed(MAX_DECIMAL_PRECISION));
     }
-  } else if (solution > MAX_POSSIBLE_INTEGER) {
-    solution = Math.round((solution / 10) * 10);
+  } else if (stringSolution.length > MAX_DIGITS_WITH_DECIMAL) {
+    solution = "Error: Overflow";
   }
 
-  display.innerText = solution;
+  display.innerText = solution + "";
   solutionDisplaying = true;
 };
 
-const switchSign = () => {
-  if (solutionDisplaying) solutionDisplaying = false;
+// tested
+const switchSign = (e, container = window.document) => {
+  solutionDisplaying = false;
 
-  let displayText = document.getElementById("display").innerText;
-  let tokenizedDisplay = tokenize(displayText);
+  let tokenizedDisplay = tokenize(
+    container.getElementById("display").innerText
+  );
+
   let currentSymbol = tokenizedDisplay[tokenizedDisplay.length - 1];
   if (isCalcNumber(currentSymbol)) {
     if (currentSymbol.charAt(0) === "-") {
@@ -197,9 +210,15 @@ const switchSign = () => {
     } else {
       currentSymbol = "-" + currentSymbol;
     }
+
     tokenizedDisplay[tokenizedDisplay.length - 1] = currentSymbol;
-    document.getElementById("display").innerText = tokenizedDisplay.join(" ");
+    container.getElementById("display").innerText = tokenizedDisplay.join(" ");
   }
+};
+
+const calculateAndPrintSolution = (expression) => {
+  let solution = solveExpression(expression);
+  printSolution(solution);
 };
 
 const solveExpression = (expression) => {
@@ -210,16 +229,33 @@ const solveExpression = (expression) => {
   }
   let postfixExpression = convertFromInfixToPostfix(normalizedExpression);
   let evaluatedExpression = evaluatePostfixExpression(postfixExpression);
-
-  printSolution(evaluatedExpression);
+  return parseFloat(evaluatedExpression);
 };
 
-const clearSolution = () => {
-  if (solutionDisplaying === true) clearDisplay();
-  solutionDisplaying = false;
+// tested
+const clearSolution = (
+  container = window.document,
+  currentState = solutionDisplaying
+) => {
+  if (currentState === true) clearDisplay(null, container);
+  currentState = false;
+  return currentState;
 };
 
-module.exports = { initButtonClickListeners, getButtonFromKeyEventCode };
+module.exports = {
+  clearDisplay,
+  clearSolution,
+  clickButton,
+  deactivateButton,
+  getButtonFromKeyEventCode,
+  initButtonClickListeners,
+  checkSyntaxOnInput,
+  printSolution,
+  printToDisplay,
+  removeLastCharacter,
+  solveExpression,
+  switchSign,
+};
 
 
 /***/ }),
