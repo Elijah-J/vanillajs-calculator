@@ -1,12 +1,17 @@
 // tested
 const checkSyntaxOnSolve = (normalizedExpression) => {
-  if (
-    "+-*/".indexOf(normalizedExpression[normalizedExpression.length - 1]) !== -1
-  ) {
-    return false;
+  let syntaxCorrect = true;
+
+  if (isLastSymbolAnOperator(normalizedExpression)) {
+    syntaxCorrect = false;
   }
 
-  return true;
+  return syntaxCorrect;
+};
+
+const isLastSymbolAnOperator = (normalizedExpression) => {
+  const lastSymbol = normalizedExpression[normalizedExpression.length - 1];
+  return isOperator(lastSymbol);
 };
 
 // tested
@@ -34,31 +39,50 @@ const convertFromInfixToPostfix = (tokenizedExpression) => {
     "+": 1,
     "-": 1,
   };
-
   let operatorStack = [];
   let postfixList = [];
 
+  const expression = {
+    tokenizedExpression,
+    precedence,
+    operatorStack,
+    postfixList,
+  };
+
+  return doConvert(expression);
+};
+
+const doConvert = ({
+  tokenizedExpression,
+  precedence,
+  operatorStack,
+  postfixList,
+}) => {
   for (let i = 0; i < tokenizedExpression.length; i++) {
     token = tokenizedExpression[i];
-    if (token.match(/\d/)) {
+    if (isCalcNumber(token)) {
       postfixList.push(token);
     } else {
-      while (
-        operatorStack.length > 0 &&
-        precedence[operatorStack[operatorStack.length - 1]] >= precedence[token]
-      ) {
+      while (existsOperatorOfLowerPrecedence(operatorStack, precedence)) {
         postfixList.push(operatorStack.pop());
       }
 
       operatorStack.push(token);
     }
   }
-
   while (operatorStack.length > 0) {
     postfixList.push(operatorStack.pop());
   }
 
   return postfixList;
+};
+
+const existsOperatorOfLowerPrecedence = (operatorStack, precedence) => {
+  const stackLength = operatorStack.length;
+  return (
+    stackLength > 0 &&
+    precedence[operatorStack[stackLength - 1]] >= precedence[token]
+  );
 };
 
 // tested
@@ -67,7 +91,7 @@ const evaluatePostfixExpression = (postfixExpression) => {
   for (let i = 0; i < postfixExpression.length; i++) {
     let token = postfixExpression[i];
 
-    if (token.match(/\d/)) {
+    if (isCalcNumber(token)) {
       operandStack.push(token);
     } else {
       let operandTwo = parseFloat(operandStack.pop());
@@ -77,7 +101,7 @@ const evaluatePostfixExpression = (postfixExpression) => {
     }
   }
 
-  return operandStack.pop();
+  return parseFloat(operandStack.pop());
 };
 
 // tested
@@ -93,6 +117,10 @@ const isCalcNumber = (symbol) => {
   return /^-?\d+\.*\d*$/.test(symbol);
 };
 
+const isOperator = (symbol) => {
+  return "+-x\u00F7".indexOf(symbol) !== -1;
+};
+
 module.exports = {
   checkSyntaxOnSolve,
   tokenize,
@@ -101,4 +129,5 @@ module.exports = {
   evaluatePostfixExpression,
   doMath,
   isCalcNumber,
+  isOperator,
 };

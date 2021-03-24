@@ -11,17 +11,30 @@ const {
   convertFromInfixToPostfix,
   evaluatePostfixExpression,
   isCalcNumber,
+  isOperator,
 } = __webpack_require__(2);
 
 const MAX_DISPLAY_CAPCITY = 17;
 const MAX_DIGITS_WITH_DECIMAL = MAX_DISPLAY_CAPCITY - 1; // to account for negative sign
-const MAX_POSSIBLE_INTEGER = Math.pow(10, MAX_DIGITS_WITH_DECIMAL) - 1;
 const MAX_DECIMAL_PRECISION = 16;
 
 let solutionDisplaying = false;
+let errorDisplaying = false;
 
 // tested
 const initButtonClickListeners = () => {
+  initTokenButtons();
+  initClearButton();
+  initBackspaceButton();
+  initOppositeButton();
+  initSolveButton();
+
+  initKeyboardEventListeners();
+
+  document.getElementById("display").innerText = "";
+};
+
+const initTokenButtons = () => {
   let tokenButtons = document.getElementsByClassName("calculator-token");
 
   [...tokenButtons].forEach((tokenButton) => {
@@ -29,55 +42,73 @@ const initButtonClickListeners = () => {
       printToDisplay(tokenButton.innerText);
     };
   });
+};
 
+const initClearButton = () => {
   let clearButton = document.getElementById("clear-expression");
   clearButton.onclick = clearDisplay;
+};
 
+const initBackspaceButton = () => {
   let backspaceButton = document.getElementById("backspace");
   backspaceButton.onclick = removeLastCharacter;
+};
 
+const initOppositeButton = () => {
   let oppositeButton = document.getElementById("calculator-opposite");
   oppositeButton.onclick = switchSign;
+};
 
+const initSolveButton = () => {
   let solveButton = document.getElementById("=");
   solveButton.onclick = function () {
     calculateAndPrintSolution(document.getElementById("display").innerText);
   };
+};
 
+const initKeyboardEventListeners = () => {
   document.addEventListener("keydown", clickButton);
   document.addEventListener("keyup", deactivateButton);
-
-  document.getElementById("display").innerText = "";
 };
 
 // tested
 const clickButton = (e, container = window.document) => {
-  let clickedButton = getButtonFromKeyEventCode(e, container);
-  if (clickedButton === null) return;
+  const clickedButton = getButtonFromKeyEventCode(e, container);
+  if (clickButton !== null) {
+    clickedButton.classList.toggle("calculator-button-active");
+    clickedButton.click();
 
-  clickedButton.classList.toggle("calculator-button-active");
-  clickedButton.click();
-
-  return clickedButton;
+    return clickedButton;
+  }
 };
 
 // tested
 const deactivateButton = (e, container = window.document) => {
-  let clickedButton = getButtonFromKeyEventCode(e, container);
-  if (clickedButton === null) return;
+  const clickedButton = getButtonFromKeyEventCode(e, container);
+  if (clickButton !== null) {
+    clickedButton.classList.remove("calculator-button-active");
 
-  clickedButton.classList.remove("calculator-button-active");
-
-  return clickedButton;
+    return clickedButton;
+  }
 };
 
 // tested
 const getButtonFromKeyEventCode = (e, container = window.document) => {
   let keyName = e.key.toString().toLowerCase();
+
+  preventDefaultBehavior(e, keyName);
+  clickedButton = doGetButton(keyName, container);
+
+  return clickedButton;
+};
+
+const preventDefaultBehavior = (e, keyName) => {
   if (keyName === "enter" || keyName == "space") {
     e.preventDefault();
   }
+};
 
+const doGetButton = (keyName, container = window.document) => {
   let clickedButton = null;
   if (keyName === "enter") {
     clickedButton = container.getElementById("=");
@@ -88,16 +119,20 @@ const getButtonFromKeyEventCode = (e, container = window.document) => {
   } else {
     clickedButton = container.getElementById(keyName);
   }
-
   return clickedButton;
 };
 
 // tested
 const printToDisplay = (symbol, container = window.document) => {
-  if ("+-x\u00F7".indexOf(symbol) === -1) {
-    solutionDisplaying = clearSolution(container);
+  if (errorDisplaying === true && errorDisplaying != undefined) {
+    // TODO: extract this logic
+    clearDisplay(null, container);
+    errorDisplaying = false;
   }
 
+  if (!isOperator(symbol)) {
+    solutionDisplaying = clearSolution(container);
+  }
   solutionDisplaying = false;
 
   let display = container.getElementById("display");
@@ -107,6 +142,10 @@ const printToDisplay = (symbol, container = window.document) => {
   )
     return;
 
+  doPrintToDisplay(symbol, display);
+};
+
+const doPrintToDisplay = (symbol, display) => {
   if (/\d/.test(symbol)) {
     display.innerText += `${symbol}`;
   } else if (/^\.$/.test(symbol)) {
@@ -147,6 +186,11 @@ const clearDisplay = (e, container = window.document) => {
 
 // tested
 const removeLastCharacter = (e, container = window.document) => {
+  if (errorDisplaying === true && errorDisplaying != undefined) {
+    clearDisplay(null, container);
+    errorDisplaying = false;
+  }
+
   solutionDisplaying = false;
 
   let display = container.getElementById("display");
@@ -188,15 +232,32 @@ const printSolution = (solution, container = window.document) => {
       solution = parseFloat(solution.toFixed(MAX_DECIMAL_PRECISION));
     }
   } else if (stringSolution.length > MAX_DIGITS_WITH_DECIMAL) {
-    solution = "Error: Overflow";
+    solution = "Overflow";
+    errorDisplaying = true;
+  } else if (!Number.isFinite(solution)) {
+    // TODO: extract this logic
+    solution = "Divide by Zero";
+    errorDisplaying = true;
   }
 
   display.innerText = solution + "";
-  solutionDisplaying = true;
+
+  if (errorDisplaying === false) {
+    solutionDisplaying = true;
+  }
 };
 
 // tested
-const switchSign = (e, container = window.document) => {
+const switchSign = (
+  e,
+  container = window.document,
+  currentErrorState = errorDisplaying
+) => {
+  if (currentErrorState === true && currentErrorState != undefined) {
+    clearDisplay(null, container);
+    errorDisplaying = false;
+    return;
+  }
   solutionDisplaying = false;
 
   let tokenizedDisplay = tokenize(
@@ -221,15 +282,24 @@ const calculateAndPrintSolution = (expression) => {
   printSolution(solution);
 };
 
+// tested
 const solveExpression = (expression) => {
-  let tokenizedExpression = tokenize(expression);
-  let normalizedExpression = normalizeSymbols(tokenizedExpression);
-  if (!checkSyntaxOnSolve(normalizedExpression)) {
+  const formattedExpression = formatExpression(expression);
+  if (!checkSyntaxOnSolve(formattedExpression)) {
     return false;
   }
-  let postfixExpression = convertFromInfixToPostfix(normalizedExpression);
-  let evaluatedExpression = evaluatePostfixExpression(postfixExpression);
-  return parseFloat(evaluatedExpression);
+  let evaluatedExpression = doSolveExpression(formattedExpression);
+  return evaluatedExpression;
+};
+
+const formatExpression = (expression) => {
+  return normalizeSymbols(tokenize(expression));
+};
+
+const doSolveExpression = (formattedExpression) => {
+  return evaluatePostfixExpression(
+    convertFromInfixToPostfix(formattedExpression)
+  );
 };
 
 // tested
@@ -264,13 +334,18 @@ module.exports = {
 
 // tested
 const checkSyntaxOnSolve = (normalizedExpression) => {
-  if (
-    "+-*/".indexOf(normalizedExpression[normalizedExpression.length - 1]) !== -1
-  ) {
-    return false;
+  let syntaxCorrect = true;
+
+  if (isLastSymbolAnOperator(normalizedExpression)) {
+    syntaxCorrect = false;
   }
 
-  return true;
+  return syntaxCorrect;
+};
+
+const isLastSymbolAnOperator = (normalizedExpression) => {
+  const lastSymbol = normalizedExpression[normalizedExpression.length - 1];
+  return isOperator(lastSymbol);
 };
 
 // tested
@@ -298,31 +373,50 @@ const convertFromInfixToPostfix = (tokenizedExpression) => {
     "+": 1,
     "-": 1,
   };
-
   let operatorStack = [];
   let postfixList = [];
 
+  const expression = {
+    tokenizedExpression,
+    precedence,
+    operatorStack,
+    postfixList,
+  };
+
+  return doConvert(expression);
+};
+
+const doConvert = ({
+  tokenizedExpression,
+  precedence,
+  operatorStack,
+  postfixList,
+}) => {
   for (let i = 0; i < tokenizedExpression.length; i++) {
     token = tokenizedExpression[i];
-    if (token.match(/\d/)) {
+    if (isCalcNumber(token)) {
       postfixList.push(token);
     } else {
-      while (
-        operatorStack.length > 0 &&
-        precedence[operatorStack[operatorStack.length - 1]] >= precedence[token]
-      ) {
+      while (existsOperatorOfLowerPrecedence(operatorStack, precedence)) {
         postfixList.push(operatorStack.pop());
       }
 
       operatorStack.push(token);
     }
   }
-
   while (operatorStack.length > 0) {
     postfixList.push(operatorStack.pop());
   }
 
   return postfixList;
+};
+
+const existsOperatorOfLowerPrecedence = (operatorStack, precedence) => {
+  const stackLength = operatorStack.length;
+  return (
+    stackLength > 0 &&
+    precedence[operatorStack[stackLength - 1]] >= precedence[token]
+  );
 };
 
 // tested
@@ -331,7 +425,7 @@ const evaluatePostfixExpression = (postfixExpression) => {
   for (let i = 0; i < postfixExpression.length; i++) {
     let token = postfixExpression[i];
 
-    if (token.match(/\d/)) {
+    if (isCalcNumber(token)) {
       operandStack.push(token);
     } else {
       let operandTwo = parseFloat(operandStack.pop());
@@ -341,7 +435,7 @@ const evaluatePostfixExpression = (postfixExpression) => {
     }
   }
 
-  return operandStack.pop();
+  return parseFloat(operandStack.pop());
 };
 
 // tested
@@ -357,6 +451,10 @@ const isCalcNumber = (symbol) => {
   return /^-?\d+\.*\d*$/.test(symbol);
 };
 
+const isOperator = (symbol) => {
+  return "+-x\u00F7".indexOf(symbol) !== -1;
+};
+
 module.exports = {
   checkSyntaxOnSolve,
   tokenize,
@@ -365,6 +463,7 @@ module.exports = {
   evaluatePostfixExpression,
   doMath,
   isCalcNumber,
+  isOperator,
 };
 
 
