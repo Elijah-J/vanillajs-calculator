@@ -295,8 +295,15 @@ describe("dom.js", () => {
     let solution = 12345678901234567;
     container.querySelector("#display").innerText = "";
     printSolution(solution, container);
+    expect(container.querySelector("#display").innerText).toBe("Overflow");
+  });
+
+  it("confirms printSolution correctly signifies a divide by zero error", () => {
+    let solution = Infinity;
+    container.querySelector("#display").innerText = "";
+    printSolution(solution, container);
     expect(container.querySelector("#display").innerText).toBe(
-      "Error: Overflow"
+      "Divide by Zero"
     );
   });
 
@@ -319,13 +326,13 @@ describe("dom.js", () => {
   it("confirms switchSign correctly transforms a number into its opposite", () => {
     let displayText = "12";
     container.querySelector("#display").innerText = displayText;
-    switchSign(null, container);
+    switchSign(null, container, false);
     expect(container.querySelector("#display").innerText).toBe(
       "-" + displayText
     );
 
     container.querySelector("#display").innerText = "-1.2";
-    switchSign(null, container);
+    switchSign(null, container, false);
     expect(container.querySelector("#display").innerText).toBe("1.2");
   });
 });
