@@ -1,4 +1,3 @@
-const { NONAME } = require("dns");
 const path = require("path");
 
 module.exports = {
