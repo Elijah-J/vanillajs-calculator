@@ -54,12 +54,12 @@ describe("dom.js", () => {
   });
 
   // check event listeners
-  it("confirms each calculator-token button has onclick event listener", () => {
-    let calculatorTokens = container.body.querySelectorAll(".calculator-token");
+  it("confirms each calculator button has onclick event listener", () => {
+    let calculatorButtons = container.body.querySelectorAll(".calculator__button");
 
     let areAllEventListenersPresent = true;
-    for (const calculatorToken of calculatorTokens) {
-      if (calculatorToken.onclick === null) {
+    for (const calculatorButton of calculatorButtons) {
+      if (calculatorButton.onclick === null) {
         areAllEventListenersPresent = false;
         break;
       }
@@ -85,7 +85,7 @@ describe("dom.js", () => {
   });
 
   it("confirms solveButton button has onclick event listener", () => {
-    let solveButton = container.body.querySelector(".calculator__solve");
+    let solveButton = container.body.querySelector(".calculator__button--equals");
     expect(solveButton.onclick).not.toBe(null);
   });
 
@@ -123,7 +123,7 @@ describe("dom.js", () => {
       code: "Digit1",
     });
     let clickedButton = clickButton(event, container);
-    expect(clickedButton.classList.contains("calculator-button-active")).toBe(
+    expect(clickedButton.classList.contains("calculator__button--active")).toBe(
       true
     );
   });
@@ -136,7 +136,7 @@ describe("dom.js", () => {
     });
 
     let clickedButton = deactivateButton(event, container);
-    expect(clickedButton.classList.contains("calculator-button-active")).toBe(
+    expect(clickedButton.classList.contains("calculator__button--active")).toBe(
       false
     );
   });
