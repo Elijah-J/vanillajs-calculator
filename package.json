@@ -5,7 +5,10 @@
   "private": true,
   "scripts": {
     "start": "NODE_OPTIONS=--openssl-legacy-provider webpack",
-    "test": "jest"
+    "test": "jest",
+    "test:visual": "jest src/__tests__/visual-regression/calculator.visual.test.js",
+    "test:visual:update": "jest src/__tests__/visual-regression/calculator.visual.test.js --updateSnapshot",
+    "test:visual:watch": "jest src/__tests__/visual-regression/calculator.visual.test.js --watch"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +16,8 @@
   "devDependencies": {
     "@testing-library/dom": "^7.30.0",
     "jest": "^26.6.3",
+    "jest-image-snapshot": "^6.5.1",
+    "puppeteer": "^13.7.0",
     "testing-library": "0.0.2",
     "webpack": "^5.26.1",
     "webpack-cli": "^4.5.0"
