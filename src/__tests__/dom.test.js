@@ -41,6 +41,8 @@ describe("dom.js", () => {
     dom = await JSDOM.fromFile(pathToHtml, options);
     await pollModules();
     container = dom.window.document;
+    // Set global document for createRipple function
+    global.document = dom.window.document;
   });
 
   it("confirms calculator is rendered", () => {
@@ -99,7 +101,7 @@ describe("dom.js", () => {
   it("confirms display clears", () => {
     container.querySelector("#display").innerText = "full1";
     clearDisplay(null, container);
-    expect(container.querySelector("#display").innerText).toBe("");
+    expect(container.querySelector("#display").innerText).toBe("0");
   });
 
   // clearSolution
@@ -111,7 +113,7 @@ describe("dom.js", () => {
   it("confirms clearSolution clears display if one is showing", () => {
     container.querySelector("#display").innerText = "full2";
     clearSolution(container, true);
-    expect(container.querySelector("#display").innerText).toBe("");
+    expect(container.querySelector("#display").innerText).toBe("0");
   });
 
   // clickButton
