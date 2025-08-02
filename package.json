@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "start": "webpack",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack",
     "test": "jest"
   },
   "keywords": [],
