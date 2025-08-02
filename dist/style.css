@@ -234,7 +234,7 @@ body {
   - transform: translateZ(0) creates new stacking context for ripple effect
   - will-change hints browser about upcoming transformations
 */
-.calculator-button {
+.calculator__button {
   appearance: none;
   border: none;
   background: var(--color-bg);
@@ -279,15 +279,13 @@ body {
 }
 
 /* Darker ripple for light buttons - higher opacity for visibility */
-.calculator-token .ripple {
+.calculator__button--number .ripple,
+.calculator__button--decimal .ripple {
   background: rgba(59, 130, 246, 0.5); /* Blue ripple for debugging */
 }
 
 /* Ensure operator button ripples are visible */
-.calculator__division .ripple,
-.calculator__multiplication .ripple,
-.calculator__subtraction .ripple,
-.calculator__addition .ripple {
+.calculator__button--operator .ripple {
   background: rgba(255, 255, 255, 0.3);
 }
 
@@ -307,14 +305,14 @@ body {
   Provides visual feedback on hover
   Subtle elevation effect with translateY
 */
-.calculator-button:hover {
+.calculator__button:hover {
   background: var(--color-border);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
 /* Performance: Reset will-change after hover to free resources */
-.calculator-button:not(:hover) {
+.calculator__button:not(:hover) {
   will-change: auto;
 }
 
@@ -324,15 +322,15 @@ body {
   Scale transform provides tactile feedback
   !important ensures consistent behavior across all button variants
 */
-.calculator-button:active,
-.calculator-button.calculator-button-active {
+.calculator__button:active,
+.calculator__button.calculator__button--active {
   transform: scale(0.95) !important;
   box-shadow: none !important;
   transition: transform 0.1s ease-out;
 }
 
 /* Maintain background colors for different button types when active */
-.calculator-button.calculator-button-active {
+.calculator__button.calculator__button--active {
   filter: brightness(0.9);
 }
 
@@ -341,14 +339,16 @@ body {
   Neutral styling for number and decimal buttons
   Border provides visual separation from operators
 */
-.calculator-token {
+.calculator__button--number,
+.calculator__button--decimal {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   overflow: hidden; /* Ensure ripple is contained */
   position: relative; /* Ensure positioning context */
 }
 
-.calculator-token:hover {
+.calculator__button--number:hover,
+.calculator__button--decimal:hover {
   background: var(--color-bg);
   border-color: var(--color-primary);
 }
@@ -359,19 +359,13 @@ body {
   Primary color scheme to distinguish from numbers
   Larger font size for better visibility of math symbols
 */
-.calculator__division,
-.calculator__multiplication,
-.calculator__subtraction,
-.calculator__addition {
+.calculator__button--operator {
   background: var(--color-primary);
   color: white;
   font-size: var(--font-size-xl);
 }
 
-.calculator__division:hover,
-.calculator__multiplication:hover,
-.calculator__subtraction:hover,
-.calculator__addition:hover {
+.calculator__button--operator:hover {
   background: var(--color-primary-hover);
 }
 
@@ -383,32 +377,32 @@ body {
   - Backspace: Secondary color for minor actions
   - Equals: Success color for primary action
 */
-#clear-expression {
+.calculator__button--clear {
   background: var(--color-danger);
   color: white;
   grid-column: span 2;
 }
 
-#clear-expression:hover {
+.calculator__button--clear:hover {
   background: var(--color-danger-hover);
 }
 
-#backspace {
+.calculator__button--backspace {
   background: var(--color-secondary);
   color: white;
 }
 
-#backspace:hover {
+.calculator__button--backspace:hover {
   background: #475569;
 }
 
-.calculator__solve {
+.calculator__button--equals {
   background: var(--color-success);
   color: white;
   font-size: var(--font-size-xl);
 }
 
-.calculator__solve:hover {
+.calculator__button--equals:hover {
   background: var(--color-success-hover);
 }
 
@@ -416,24 +410,10 @@ body {
   Zero Button
   Spans two columns for traditional calculator layout
 */
-.calculator__zero {
+.calculator__button--zero {
   grid-column: span 2;
 }
 
-/* 
-  Grid Positioning
-  Explicit grid areas ensure consistent button layout
-  Maintains traditional calculator button arrangement
-*/
-.calculator__one { grid-area: auto; }
-.calculator__two { grid-area: auto; }
-.calculator__three { grid-area: auto; }
-.calculator__four { grid-area: auto; }
-.calculator__five { grid-area: auto; }
-.calculator__six { grid-area: auto; }
-.calculator__seven { grid-area: auto; }
-.calculator__eight { grid-area: auto; }
-.calculator__nine { grid-area: auto; }
 
 /* 
   Responsive Design
@@ -452,7 +432,7 @@ body {
     padding: var(--space-xl);
   }
   
-  .calculator-button {
+  .calculator__button {
     font-size: var(--font-size-xl);
     min-height: 4rem;
   }
@@ -469,7 +449,7 @@ body {
   Prevents accidental taps on small screens
 */
 @media (pointer: coarse) {
-  .calculator-button {
+  .calculator__button {
     min-height: 48px;
   }
 }
@@ -508,7 +488,7 @@ body {
   Adds borders and adjusts colors for better differentiation
 */
 @media (prefers-contrast: high) {
-  .calculator-button {
+  .calculator__button {
     border: 2px solid currentColor;
   }
   
@@ -528,12 +508,12 @@ body {
   Preserves button borders and essential visual indicators
 */
 @media (forced-colors: active) {
-  .calculator-button {
+  .calculator__button {
     forced-color-adjust: none;
     border: 1px solid ButtonText;
   }
   
-  .calculator-button:hover {
+  .calculator__button:hover {
     border-width: 2px;
   }
   
@@ -572,7 +552,7 @@ body {
     flex-wrap: wrap;
   }
   
-  .calculator-button {
+  .calculator__button {
     flex: 0 0 25%;
   }
   
@@ -580,12 +560,12 @@ body {
     flex: 0 0 100%;
   }
   
-  #clear-expression,
-  .calculator__zero {
+  .calculator__button--clear,
+  .calculator__button--zero {
     flex: 0 0 50%;
   }
   
-  .calculator__solve {
+  .calculator__button--equals {
     flex: 0 0 25%;
   }
 }

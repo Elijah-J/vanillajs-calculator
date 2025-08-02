@@ -22,8 +22,8 @@ global.stabilizeCalculator = async (page) => {
     }
     
     // Remove any active states
-    document.querySelectorAll('.calculator-button-active').forEach(el => {
-      el.classList.remove('calculator-button-active');
+    document.querySelectorAll('.calculator__button--active').forEach(el => {
+      el.classList.remove('calculator__button--active');
     });
     
     // Remove any ripple elements

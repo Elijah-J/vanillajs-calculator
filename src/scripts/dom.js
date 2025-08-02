@@ -39,7 +39,7 @@ const initButtonClickListeners = () => {
 };
 
 const initTokenButtons = () => {
-  let tokenButtons = document.getElementsByClassName("calculator-token");
+  let tokenButtons = document.getElementsByClassName("calculator__button");
 
   [...tokenButtons].forEach((tokenButton) => {
     tokenButton.onclick = function (e) {
@@ -129,7 +129,7 @@ const initKeyboardEventListeners = () => {
 const clickButton = (e, container = window.document) => {
   const clickedButton = getButtonFromKeyEventCode(e, container);
   if (clickedButton !== null) {
-    clickedButton.classList.add("calculator-button-active");
+    clickedButton.classList.add("calculator__button--active");
     
     // Create ripple effect for keyboard events
     createRipple(null, clickedButton);
@@ -147,7 +147,7 @@ const clickButton = (e, container = window.document) => {
 const deactivateButton = (e, container = window.document) => {
   const clickedButton = getButtonFromKeyEventCode(e, container);
   if (clickedButton !== null) {
-    clickedButton.classList.remove("calculator-button-active");
+    clickedButton.classList.remove("calculator__button--active");
 
     return clickedButton;
   }
