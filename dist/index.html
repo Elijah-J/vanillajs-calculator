@@ -4,70 +4,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A modern, accessible calculator built with vanilla JavaScript" />
   <link rel="stylesheet" href="./style.css" />
-  <title>Calculator</title>
+  <title>Calculator - Accessible Web Calculator</title>
 </head>
 
 <body>
   <div class="flex-container">
-    <div class="calculator">
-      <div id="display" class="calculator__display"></div>
-      <button type="button" id="clear-expression" class="calculator-button">AC</button>
-      <button type="button" id="backspace" class="calculator-button">&#x232B</button>
-      <button type="button" id="calculator-opposite" class="calculator-button">+/-</button>
-      <button type="button" id="9" class="calculator-token calculator-button calculator__nine">
-        9
+    <main class="calculator" role="application" aria-label="Calculator">
+      <output id="display" class="calculator__display" aria-live="polite" aria-atomic="true">0</output>
+      
+      <!-- Control buttons -->
+      <button type="button" 
+              id="clear-expression" 
+              class="calculator-button calculator-button--clear"
+              aria-label="Clear all"
+              data-action="clear">
+        AC
       </button>
-      <button type="button" id="8" class="calculator-token calculator-button calculator__eight">
-        8
+      
+      <button type="button" 
+              id="backspace" 
+              class="calculator-button calculator-button--backspace"
+              aria-label="Delete last character"
+              data-action="backspace">
+        ⌫
       </button>
-      <button type="button" id="7" class="calculator-token calculator-button calculator__seven">
+      
+      <button type="button" 
+              id="calculator-opposite" 
+              class="calculator-button calculator-button--opposite"
+              aria-label="Change sign"
+              data-action="opposite">
+        +/-
+      </button>
+      
+      <!-- Operator buttons -->
+      <button type="button" 
+              class="calculator-token calculator-button calculator__division"
+              aria-label="Divide"
+              data-value="/"
+              data-action="operator">
+        ÷
+      </button>
+      
+      <!-- Number buttons row 1 -->
+      <button type="button" 
+              class="calculator-token calculator-button calculator__seven"
+              aria-label="Number 7"
+              data-value="7"
+              data-action="number">
         7
       </button>
-      <button type="button" id="6" class="calculator-token calculator-button calculator__six">
-        6
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__eight"
+              aria-label="Number 8"
+              data-value="8"
+              data-action="number">
+        8
       </button>
-      <button type="button" id="5" class="calculator-token calculator-button calculator__five">
-        5
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__nine"
+              aria-label="Number 9"
+              data-value="9"
+              data-action="number">
+        9
       </button>
-      <button type="button" id="4" class="calculator-token calculator-button calculator__four">
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__multiplication"
+              aria-label="Multiply"
+              data-value="*"
+              data-action="operator">
+        ×
+      </button>
+      
+      <!-- Number buttons row 2 -->
+      <button type="button" 
+              class="calculator-token calculator-button calculator__four"
+              aria-label="Number 4"
+              data-value="4"
+              data-action="number">
         4
       </button>
-      <button type="button" id="3" class="calculator-token calculator-button calculator__three">
-        3
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__five"
+              aria-label="Number 5"
+              data-value="5"
+              data-action="number">
+        5
       </button>
-      <button type="button" id="2" class="calculator-token calculator-button calculator__two">
-        2
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__six"
+              aria-label="Number 6"
+              data-value="6"
+              data-action="number">
+        6
       </button>
-      <button type="button" id="1" class="calculator-token calculator-button calculator__one">
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__subtraction"
+              aria-label="Subtract"
+              data-value="-"
+              data-action="operator">
+        −
+      </button>
+      
+      <!-- Number buttons row 3 -->
+      <button type="button" 
+              class="calculator-token calculator-button calculator__one"
+              aria-label="Number 1"
+              data-value="1"
+              data-action="number">
         1
       </button>
-      <button type="button" id="0" class="calculator-token calculator-button calculator__zero">
-        0
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__two"
+              aria-label="Number 2"
+              data-value="2"
+              data-action="number">
+        2
       </button>
-      <button type="button" id="." class="calculator-token calculator-button">
-        .
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__three"
+              aria-label="Number 3"
+              data-value="3"
+              data-action="number">
+        3
       </button>
-      <button type="button" id="/" class="calculator-token calculator-button calculator__division">
-        &divide;
-      </button>
-      <button type="button" id="*" class="calculator-token calculator-button calculator__multiplication">
-        x
-      </button>
-      <button type="button" id="-" class="calculator-token calculator-button calculator__subtraction">
-        -
-      </button>
-      <button type="button" id="+" class="calculator-token calculator-button calculator__addition">
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__addition"
+              aria-label="Add"
+              data-value="+"
+              data-action="operator">
         +
       </button>
-      <button type="button" id="=" class="calculator-button calculator__solve">
+      
+      <!-- Bottom row -->
+      <button type="button" 
+              class="calculator-token calculator-button calculator__zero"
+              aria-label="Number 0"
+              data-value="0"
+              data-action="number">
+        0
+      </button>
+      
+      <button type="button" 
+              class="calculator-token calculator-button calculator__decimal"
+              aria-label="Decimal point"
+              data-value="."
+              data-action="decimal">
+        .
+      </button>
+      
+      <button type="button" 
+              class="calculator-button calculator__solve"
+              aria-label="Calculate result"
+              data-action="calculate">
         =
       </button>
-    </div>
+    </main>
   </div>
-  <script src="main.js">
-
-  </script>
+  
+  <script src="main.js"></script>
 </body>
 
 </html>

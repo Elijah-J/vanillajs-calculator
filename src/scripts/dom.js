@@ -97,7 +97,7 @@ const getButtonFromKeyEventCode = (e, container = window.document) => {
 };
 
 const preventDefaultBehavior = (e, keyName) => {
-  if (keyName === "enter" || keyName == "space") {
+  if (keyName === "enter" || keyName === " " || keyName === "backspace" || keyName === "delete") {
     e.preventDefault();
   }
 };
@@ -140,6 +140,11 @@ const printToDisplay = (symbol, container = window.document) => {
 };
 
 const doPrintToDisplay = (symbol, display) => {
+  // Clear the initial "0" if needed
+  if (display.innerText === "0" && /\d/.test(symbol)) {
+    display.innerText = "";
+  }
+  
   if (/\d/.test(symbol)) {
     display.innerText += `${symbol}`;
   } else if (/^\.$/.test(symbol)) {
