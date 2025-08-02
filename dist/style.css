@@ -1,133 +1,385 @@
+/* Modern Calculator Styles */
+
+/* CSS Custom Properties - Design System */
+:root {
+  /* Color System */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-active: #1d4ed8;
+  --color-secondary: #64748b;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  
+  /* Neutral Colors */
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  
+  /* Spacing System */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-border: #334155;
+    --color-primary: #60a5fa;
+    --color-primary-hover: #3b82f6;
+    --color-primary-active: #2563eb;
+  }
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  background: #eee;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-button {
-  border: none;
-}
-
-button:hover {
-  background: #ddd;
-}
-
-button:active,
-.calculator-button-active {
-  background: #bbb;
-}
-
-button:focus {
+/* Focus Visible Polyfill */
+:focus {
   outline: none;
 }
 
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Container */
 .flex-container {
   display: flex;
-
   justify-content: center;
   align-items: center;
-
   min-height: 100vh;
+  padding: var(--space-md);
 }
 
+/* Calculator Main */
 .calculator {
+  width: 100%;
+  max-width: 320px;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-lg);
   display: grid;
-
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: 1.5fr repeat(5, 1fr);
-
-  grid-template-areas:
-    "display display display display"
-    "main-button-area main-button-area main-button-area division-operator"
-    "number-seven number-eight number-nine multiplication-operator"
-    "number-four number-five number-six subtraction-operator"
-    "number-one number-two number-three addition-operator"
-    "number-zero number-zero . equality-operator";
-
-  column-gap: 1px;
-  row-gap: 1px;
-
-  min-width: 270px;
-  min-height: 480px;
-
-  border: 1px solid #777;
-
-  background: #ccc;
+  gap: var(--space-sm);
+  contain: layout style;
+  animation: slideIn 0.3s ease-out;
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Calculator Display */
 .calculator__display {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-
-  grid-area: display;
-
-  box-sizing: border-box;
-  padding: 1.6rem;
-  padding-right: 1rem;
-
-  font-family: sans-serif;
-  font-size: 1.4rem;
-
+  grid-column: 1 / -1;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
   text-align: right;
-
-  background: #fff;
+  min-height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: var(--shadow-inner);
+  overflow: hidden;
+  word-break: break-all;
 }
 
-.calculator__division {
-  grid-area: division-operator;
+/* Calculator Buttons Base */
+.calculator-button {
+  appearance: none;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  min-height: 3.5rem;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-.calculator__multiplication {
-  grid-area: multiplication-operator;
+/* Ripple effect */
+.calculator-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
-.calculator__subtraction {
-  grid-area: subtraction-operator;
+.calculator-button:active::after {
+  width: 300px;
+  height: 300px;
 }
 
+/* Button Hover State */
+.calculator-button:hover {
+  background: var(--color-border);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Button Active State */
+.calculator-button:active,
+.calculator-button-active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: none;
+  background: var(--color-border);
+  transition: transform 0.1s ease-out;
+}
+
+/* Number Buttons */
+.calculator-token {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.calculator-token:hover {
+  background: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.calculator-token:active {
+  background: var(--color-border);
+}
+
+/* Operator Buttons */
+.calculator__division,
+.calculator__multiplication,
+.calculator__subtraction,
 .calculator__addition {
-  grid-area: addition-operator;
+  background: var(--color-primary);
+  color: white;
+  font-size: var(--font-size-xl);
 }
 
-.calculator__equality {
-  grid-area: equality-operator;
+.calculator__division:hover,
+.calculator__multiplication:hover,
+.calculator__subtraction:hover,
+.calculator__addition:hover {
+  background: var(--color-primary-hover);
 }
 
-.calculator__nine {
-  grid-area: number-nine;
+.calculator__division:active,
+.calculator__multiplication:active,
+.calculator__subtraction:active,
+.calculator__addition:active {
+  background: var(--color-primary-active);
 }
 
-.calculator__eight {
-  grid-area: number-eight;
+/* Special Buttons */
+#clear-expression {
+  background: var(--color-danger);
+  color: white;
+  grid-column: span 2;
 }
 
-.calculator__seven {
-  grid-area: number-seven;
+#clear-expression:hover {
+  background: var(--color-danger-hover);
 }
 
-.calculator__six {
-  grid-area: number-six;
+#backspace {
+  background: var(--color-secondary);
+  color: white;
 }
 
-.calculator__five {
-  grid-area: number-five;
+#backspace:hover {
+  background: #475569;
 }
 
-.calculator__four {
-  grid-area: number-four;
+.calculator__solve {
+  background: var(--color-success);
+  color: white;
+  font-size: var(--font-size-xl);
 }
 
-.calculator__three {
-  grid-area: number-three;
+.calculator__solve:hover {
+  background: var(--color-success-hover);
 }
 
-.calculator__two {
-  grid-area: number-two;
-}
-
-.calculator__one {
-  grid-area: number-one;
-}
-
+/* Zero Button */
 .calculator__zero {
-  grid-area: number-zero;
+  grid-column: span 2;
+}
+
+/* Grid Positioning */
+.calculator__one { grid-area: auto; }
+.calculator__two { grid-area: auto; }
+.calculator__three { grid-area: auto; }
+.calculator__four { grid-area: auto; }
+.calculator__five { grid-area: auto; }
+.calculator__six { grid-area: auto; }
+.calculator__seven { grid-area: auto; }
+.calculator__eight { grid-area: auto; }
+.calculator__nine { grid-area: auto; }
+
+/* Responsive Design */
+@media (min-width: 375px) {
+  .calculator {
+    max-width: 360px;
+  }
+}
+
+@media (min-width: 768px) {
+  .calculator {
+    max-width: 400px;
+    padding: var(--space-xl);
+  }
+  
+  .calculator-button {
+    font-size: var(--font-size-xl);
+    min-height: 4rem;
+  }
+  
+  .calculator__display {
+    font-size: 2.5rem;
+    min-height: 5rem;
+  }
+}
+
+/* Touch Device Optimization */
+@media (pointer: coarse) {
+  .calculator-button {
+    min-height: 48px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+  }
+  
+  .calculator {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
+
+/* Progressive Enhancement */
+@supports (backdrop-filter: blur(10px)) {
+  .calculator {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .calculator {
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(10px);
+    }
+  }
+}
+
+/* CSS Grid fallback */
+@supports not (display: grid) {
+  .calculator {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .calculator-button {
+    flex: 0 0 25%;
+  }
+  
+  .calculator__display {
+    flex: 0 0 100%;
+  }
+  
+  #clear-expression,
+  .calculator__zero {
+    flex: 0 0 50%;
+  }
+  
+  .calculator__solve {
+    flex: 0 0 25%;
+  }
 }
