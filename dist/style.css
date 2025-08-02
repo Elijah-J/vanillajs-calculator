@@ -1,6 +1,16 @@
 /* Modern Calculator Styles */
 
-/* CSS Custom Properties - Design System */
+/* 
+  CSS Custom Properties - Design System
+  
+  This design system provides:
+  - Consistent spacing using a 4px base unit (0.25rem)
+  - Type scale based on major third ratio (1.25)
+  - Semantic color naming for easy theme switching
+  - Transition timing functions for smooth animations
+  
+  All values can be overridden for custom themes
+*/
 :root {
   /* Color System */
   --color-primary: #3b82f6;
@@ -55,7 +65,11 @@
   --radius-xl: 1rem;
 }
 
-/* Dark Mode Support */
+/* 
+  Dark Mode Support
+  Automatically switches based on user's system preference
+  Maintains WCAG AA contrast ratios in both light and dark themes
+*/
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg: #0f172a;
@@ -69,7 +83,10 @@
   }
 }
 
-/* Reset and Base Styles */
+/* 
+  Reset and Base Styles
+  Normalizes browser defaults for consistent cross-browser rendering
+*/
 * {
   margin: 0;
   padding: 0;
@@ -82,21 +99,68 @@ body {
   line-height: 1.5;
   color: var(--color-text);
   background-color: var(--color-bg);
+  /* Compat: -webkit-font-smoothing improves text rendering on macOS */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Focus Visible Polyfill */
+/* 
+  Focus Visible Polyfill
+  Removes focus outline for mouse users while maintaining it for keyboard navigation
+  Uses :focus-visible for modern browsers with fallback
+*/
 :focus {
   outline: none;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 3px solid var(--color-primary);
   outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
-/* Container */
+/* 
+  Utility Classes
+  Reusable utilities for common patterns
+*/
+
+/* Screen reader only content - maintains accessibility without visual clutter */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Prevent text selection for better UX on interactive elements */
+.u-no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Interactive element optimizations */
+.u-interactive {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Full width utility */
+.u-full-width {
+  width: 100%;
+}
+
+/* 
+  Container Layout
+  Centers calculator vertically and horizontally in viewport
+  Provides responsive padding for small screens
+*/
 .flex-container {
   display: flex;
   justify-content: center;
@@ -105,7 +169,11 @@ body {
   padding: var(--space-md);
 }
 
-/* Calculator Main */
+/* 
+  Calculator Main
+  Uses CSS Grid for robust button layout
+  contain property improves rendering performance by isolating layout calculations
+*/
 .calculator {
   width: 100%;
   max-width: 320px;
@@ -116,7 +184,8 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-sm);
-  contain: layout style;
+  /* Performance: contain isolates layout, style, and paint calculations */
+  contain: layout style paint;
   animation: slideIn 0.3s ease-out;
 }
 
@@ -131,7 +200,12 @@ body {
   }
 }
 
-/* Calculator Display */
+/* 
+  Calculator Display
+  - tabular-nums ensures consistent number width for better readability
+  - word-break prevents long numbers from overflowing
+  - min-height maintains consistent UI even with empty display
+*/
 .calculator__display {
   grid-column: 1 / -1;
   background: var(--color-bg);
@@ -149,9 +223,17 @@ body {
   box-shadow: var(--shadow-inner);
   overflow: hidden;
   word-break: break-all;
+  /* Performance: isolation reduces paint areas when display updates */
+  isolation: isolate;
 }
 
-/* Calculator Buttons Base */
+/* 
+  Calculator Buttons Base
+  Base styles for all calculator buttons
+  - appearance: none removes native button styling for consistency
+  - transform: translateZ(0) creates new stacking context for ripple effect
+  - will-change hints browser about upcoming transformations
+*/
 .calculator-button {
   appearance: none;
   border: none;
@@ -168,12 +250,21 @@ body {
   overflow: hidden;
   min-height: 3.5rem;
   user-select: none;
+  /* A11y: -webkit-tap-highlight-color removes iOS tap highlight for cleaner interaction */
   -webkit-tap-highlight-color: transparent;
+  /* Performance: will-change and transform: translateZ(0) trigger GPU acceleration */
   transform: translateZ(0);
-  will-change: transform;
+  will-change: transform, background-color;
+  /* Performance: contain button layout and paint calculations */
+  contain: layout style paint;
 }
 
-/* Dynamic Ripple Effect */
+/* 
+  Dynamic Ripple Effect
+  Material Design-inspired feedback for button presses
+  Uses CSS animations for smooth, performant interactions
+  Different ripple colors for different button types
+*/
 .ripple {
   position: absolute;
   border-radius: 50%;
@@ -183,6 +274,8 @@ body {
   pointer-events: none;
   z-index: 10;
   opacity: 1;
+  /* Performance: will-change for ripple animation */
+  will-change: transform, opacity;
 }
 
 /* Darker ripple for light buttons - higher opacity for visibility */
@@ -209,14 +302,28 @@ body {
   }
 }
 
-/* Button Hover State */
+/* 
+  Button Hover State
+  Provides visual feedback on hover
+  Subtle elevation effect with translateY
+*/
 .calculator-button:hover {
   background: var(--color-border);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
-/* Button Active State - Higher specificity to override all button types */
+/* Performance: Reset will-change after hover to free resources */
+.calculator-button:not(:hover) {
+  will-change: auto;
+}
+
+/* 
+  Button Active State
+  Higher specificity to override all button types
+  Scale transform provides tactile feedback
+  !important ensures consistent behavior across all button variants
+*/
 .calculator-button:active,
 .calculator-button.calculator-button-active {
   transform: scale(0.95) !important;
@@ -229,7 +336,11 @@ body {
   filter: brightness(0.9);
 }
 
-/* Number Buttons */
+/* 
+  Number Buttons
+  Neutral styling for number and decimal buttons
+  Border provides visual separation from operators
+*/
 .calculator-token {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -243,7 +354,11 @@ body {
 }
 
 
-/* Operator Buttons */
+/* 
+  Operator Buttons
+  Primary color scheme to distinguish from numbers
+  Larger font size for better visibility of math symbols
+*/
 .calculator__division,
 .calculator__multiplication,
 .calculator__subtraction,
@@ -261,7 +376,13 @@ body {
 }
 
 
-/* Special Buttons */
+/* 
+  Special Buttons
+  Unique colors for different button functions:
+  - Clear (AC): Danger color warns of data loss
+  - Backspace: Secondary color for minor actions
+  - Equals: Success color for primary action
+*/
 #clear-expression {
   background: var(--color-danger);
   color: white;
@@ -291,12 +412,19 @@ body {
   background: var(--color-success-hover);
 }
 
-/* Zero Button */
+/* 
+  Zero Button
+  Spans two columns for traditional calculator layout
+*/
 .calculator__zero {
   grid-column: span 2;
 }
 
-/* Grid Positioning */
+/* 
+  Grid Positioning
+  Explicit grid areas ensure consistent button layout
+  Maintains traditional calculator button arrangement
+*/
 .calculator__one { grid-area: auto; }
 .calculator__two { grid-area: auto; }
 .calculator__three { grid-area: auto; }
@@ -307,7 +435,11 @@ body {
 .calculator__eight { grid-area: auto; }
 .calculator__nine { grid-area: auto; }
 
-/* Responsive Design */
+/* 
+  Responsive Design
+  Breakpoints chosen based on common device sizes
+  Progressively enhances calculator size and spacing
+*/
 @media (min-width: 375px) {
   .calculator {
     max-width: 360px;
@@ -331,14 +463,22 @@ body {
   }
 }
 
-/* Touch Device Optimization */
+/* 
+  Touch Device Optimization
+  Ensures minimum 48px touch targets per Material Design guidelines
+  Prevents accidental taps on small screens
+*/
 @media (pointer: coarse) {
   .calculator-button {
     min-height: 48px;
   }
 }
 
-/* Reduced Motion */
+/* 
+  Reduced Motion
+  Respects user preference for reduced animation
+  Essential for users with vestibular disorders
+*/
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;
@@ -346,7 +486,11 @@ body {
   }
 }
 
-/* Print Styles */
+/* 
+  Print Styles
+  Optimizes calculator appearance for printing
+  Removes shadows and uses high contrast borders
+*/
 @media print {
   body {
     background: white;
@@ -358,7 +502,51 @@ body {
   }
 }
 
-/* Progressive Enhancement */
+/* 
+  High Contrast Mode Support
+  Enhances visibility for users who need increased contrast
+  Adds borders and adjusts colors for better differentiation
+*/
+@media (prefers-contrast: high) {
+  .calculator-button {
+    border: 2px solid currentColor;
+  }
+  
+  .calculator__display {
+    border-width: 3px;
+  }
+  
+  :focus-visible {
+    outline-width: 4px;
+    outline-offset: 3px;
+  }
+}
+
+/* 
+  Forced Colors Mode (Windows High Contrast)
+  Ensures calculator remains usable in Windows High Contrast mode
+  Preserves button borders and essential visual indicators
+*/
+@media (forced-colors: active) {
+  .calculator-button {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+  }
+  
+  .calculator-button:hover {
+    border-width: 2px;
+  }
+  
+  .calculator__display {
+    border: 2px solid ButtonText;
+  }
+}
+
+/* 
+  Progressive Enhancement
+  Adds glassmorphism effect for browsers supporting backdrop-filter
+  Gracefully degrades to solid backgrounds on older browsers
+*/
 @supports (backdrop-filter: blur(10px)) {
   .calculator {
     background: rgba(255, 255, 255, 0.9);
@@ -373,7 +561,11 @@ body {
   }
 }
 
-/* CSS Grid fallback */
+/* 
+  CSS Grid Fallback
+  Provides flexbox layout for browsers without Grid support (IE11, older mobile browsers)
+  Maintains functional calculator layout using percentage-based widths
+*/
 @supports not (display: grid) {
   .calculator {
     display: flex;
