@@ -25,7 +25,7 @@ const initButtonClickListeners = () => {
 
   initKeyboardEventListeners();
 
-  document.getElementById("display").innerText = "";
+  document.getElementById("display").innerText = "0";
 };
 
 const initTokenButtons = () => {
@@ -33,7 +33,8 @@ const initTokenButtons = () => {
 
   [...tokenButtons].forEach((tokenButton) => {
     tokenButton.onclick = function () {
-      printToDisplay(tokenButton.innerText);
+      const value = tokenButton.dataset.value || tokenButton.innerText;
+      printToDisplay(value);
     };
   });
 };
@@ -54,7 +55,7 @@ const initOppositeButton = () => {
 };
 
 const initSolveButton = () => {
-  let solveButton = document.getElementById("=");
+  let solveButton = document.querySelector('[data-action="calculate"]');
   solveButton.onclick = function () {
     calculateAndPrintSolution(document.getElementById("display").innerText);
   };
@@ -91,7 +92,7 @@ const getButtonFromKeyEventCode = (e, container = window.document) => {
   let keyName = e.key.toString().toLowerCase();
 
   preventDefaultBehavior(e, keyName);
-  clickedButton = doGetButton(keyName, container);
+  let clickedButton = doGetButton(keyName, container);
 
   return clickedButton;
 };
@@ -105,11 +106,19 @@ const preventDefaultBehavior = (e, keyName) => {
 const doGetButton = (keyName, container = window.document) => {
   let clickedButton = null;
   if (keyName === "enter") {
-    clickedButton = container.getElementById("=");
+    clickedButton = container.querySelector('[data-action="calculate"]');
   } else if (keyName === "escape") {
     clickedButton = container.getElementById("clear-expression");
   } else if (keyName === "o") {
     clickedButton = container.getElementById("calculator-opposite");
+  } else if (keyName === "backspace" || keyName === "delete") {
+    clickedButton = container.getElementById("backspace");
+  } else if (/^[0-9]$/.test(keyName)) {
+    clickedButton = container.querySelector(`[data-value="${keyName}"][data-action="number"]`);
+  } else if (keyName === "." || keyName === ",") {
+    clickedButton = container.querySelector('[data-value="."]');
+  } else if (keyName === "+" || keyName === "-" || keyName === "*" || keyName === "/") {
+    clickedButton = container.querySelector(`[data-value="${keyName}"][data-action="operator"]`);
   } else {
     clickedButton = container.getElementById(keyName);
   }
@@ -180,7 +189,7 @@ const checkSyntaxOnInput = (symbol, container = window.document) => {
 
 // tested
 const clearDisplay = (e, container = window.document) => {
-  container.getElementById("display").innerText = "";
+  container.getElementById("display").innerText = "0";
 };
 
 // tested
