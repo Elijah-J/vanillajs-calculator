@@ -22,6 +22,16 @@ const initButtonClickListeners = () => {
   initBackspaceButton();
   initOppositeButton();
   initSolveButton();
+  
+  // Add ripple to all calculator buttons as a fallback
+  const allButtons = document.querySelectorAll('.calculator-button');
+  allButtons.forEach(button => {
+    if (!button.onclick) {
+      button.addEventListener('click', function(e) {
+        createRipple(e, button);
+      });
+    }
+  });
 
   initKeyboardEventListeners();
 
@@ -32,8 +42,11 @@ const initTokenButtons = () => {
   let tokenButtons = document.getElementsByClassName("calculator-token");
 
   [...tokenButtons].forEach((tokenButton) => {
-    tokenButton.onclick = function () {
-      const value = tokenButton.dataset.value || tokenButton.innerText;
+    tokenButton.onclick = function (e) {
+      if (!tokenButton._skipRipple) {
+        createRipple(e, tokenButton);
+      }
+      const value = tokenButton.dataset.value || tokenButton.innerText.trim();
       printToDisplay(value);
     };
   });
@@ -41,24 +54,70 @@ const initTokenButtons = () => {
 
 const initClearButton = () => {
   let clearButton = document.getElementById("clear-expression");
-  clearButton.onclick = clearDisplay;
+  clearButton.onclick = function(e) {
+    if (!clearButton._skipRipple) {
+      createRipple(e, clearButton);
+    }
+    clearDisplay();
+  };
 };
 
 const initBackspaceButton = () => {
   let backspaceButton = document.getElementById("backspace");
-  backspaceButton.onclick = removeLastCharacter;
+  backspaceButton.onclick = function(e) {
+    if (!backspaceButton._skipRipple) {
+      createRipple(e, backspaceButton);
+    }
+    removeLastCharacter();
+  };
 };
 
 const initOppositeButton = () => {
   let oppositeButton = document.getElementById("calculator-opposite");
-  oppositeButton.onclick = switchSign;
+  oppositeButton.onclick = function(e) {
+    if (!oppositeButton._skipRipple) {
+      createRipple(e, oppositeButton);
+    }
+    switchSign();
+  };
 };
 
 const initSolveButton = () => {
   let solveButton = document.querySelector('[data-action="calculate"]');
-  solveButton.onclick = function () {
+  solveButton.onclick = function (e) {
+    if (!solveButton._skipRipple) {
+      createRipple(e, solveButton);
+    }
     calculateAndPrintSolution(document.getElementById("display").innerText);
   };
+};
+
+const createRipple = (event, button) => {
+  const ripple = document.createElement("span");
+  const rect = button.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  
+  // Handle keyboard events or missing coordinates by centering the ripple
+  let x, y;
+  if (event && event.clientX !== undefined && event.clientY !== undefined) {
+    x = event.clientX - rect.left - size / 2;
+    y = event.clientY - rect.top - size / 2;
+  } else {
+    // Center the ripple for keyboard events
+    x = rect.width / 2 - size / 2;
+    y = rect.height / 2 - size / 2;
+  }
+  
+  ripple.style.width = ripple.style.height = size + "px";
+  ripple.style.left = x + "px";
+  ripple.style.top = y + "px";
+  ripple.classList.add("ripple");
+  
+  button.appendChild(ripple);
+  
+  setTimeout(() => {
+    ripple.remove();
+  }, 400);
 };
 
 const initKeyboardEventListeners = () => {
@@ -69,9 +128,16 @@ const initKeyboardEventListeners = () => {
 // tested
 const clickButton = (e, container = window.document) => {
   const clickedButton = getButtonFromKeyEventCode(e, container);
-  if (clickButton !== null) {
-    clickedButton.classList.toggle("calculator-button-active");
+  if (clickedButton !== null) {
+    clickedButton.classList.add("calculator-button-active");
+    
+    // Create ripple effect for keyboard events
+    createRipple(null, clickedButton);
+    
+    // Trigger the click without creating another ripple
+    clickedButton._skipRipple = true;
     clickedButton.click();
+    clickedButton._skipRipple = false;
 
     return clickedButton;
   }
@@ -80,7 +146,7 @@ const clickButton = (e, container = window.document) => {
 // tested
 const deactivateButton = (e, container = window.document) => {
   const clickedButton = getButtonFromKeyEventCode(e, container);
-  if (clickButton !== null) {
+  if (clickedButton !== null) {
     clickedButton.classList.remove("calculator-button-active");
 
     return clickedButton;
