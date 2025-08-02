@@ -173,23 +173,40 @@ body {
   will-change: transform;
 }
 
-/* Ripple effect */
-.calculator-button::after {
-  content: '';
+/* Dynamic Ripple Effect */
+.ripple {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: ripple-animation 0.4s ease-out;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
 }
 
-.calculator-button:active::after {
-  width: 300px;
-  height: 300px;
+/* Darker ripple for light buttons - higher opacity for visibility */
+.calculator-token .ripple {
+  background: rgba(59, 130, 246, 0.5); /* Blue ripple for debugging */
+}
+
+/* Ensure operator button ripples are visible */
+.calculator__division .ripple,
+.calculator__multiplication .ripple,
+.calculator__subtraction .ripple,
+.calculator__addition .ripple {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes ripple-animation {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 /* Button Hover State */
@@ -199,19 +216,25 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-/* Button Active State */
+/* Button Active State - Higher specificity to override all button types */
 .calculator-button:active,
-.calculator-button-active {
-  transform: translateY(0) scale(0.95);
-  box-shadow: none;
-  background: var(--color-border);
+.calculator-button.calculator-button-active {
+  transform: scale(0.95) !important;
+  box-shadow: none !important;
   transition: transform 0.1s ease-out;
+}
+
+/* Maintain background colors for different button types when active */
+.calculator-button.calculator-button-active {
+  filter: brightness(0.9);
 }
 
 /* Number Buttons */
 .calculator-token {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
+  overflow: hidden; /* Ensure ripple is contained */
+  position: relative; /* Ensure positioning context */
 }
 
 .calculator-token:hover {
@@ -219,9 +242,6 @@ body {
   border-color: var(--color-primary);
 }
 
-.calculator-token:active {
-  background: var(--color-border);
-}
 
 /* Operator Buttons */
 .calculator__division,
@@ -240,12 +260,6 @@ body {
   background: var(--color-primary-hover);
 }
 
-.calculator__division:active,
-.calculator__multiplication:active,
-.calculator__subtraction:active,
-.calculator__addition:active {
-  background: var(--color-primary-active);
-}
 
 /* Special Buttons */
 #clear-expression {
